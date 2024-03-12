@@ -3,23 +3,57 @@ import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt.js";
 
 export const register = async (req, res) => {
-  const { email, password, username } = req.body;
+  const { email, password, username, confirmPassword } = req.body;
   try {
-    const passwordHash = await bcrypt.hash(password, 10);
+    // Verificar si el usuario ya existe
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "El correo electrónico ya está registrado" });
+    }
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Las contraseñas no coinciden" });
+    }
+    if (
+      password.length < 8 ||
+      !/\d/.test(password) || // Al menos un número
+      !/[A-Z]/.test(password) || // Al menos una letra mayúscula
+      !/[^a-zA-Z0-9]/.test(password) // Al menos un carácter especial
+    ) {
+      return res.status(400).json({
+        message:
+          "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un caracter especial",
+      });
+    }
 
+    // Generar hash de la contraseña
+    const salt = await bcrypt.genSalt(10);
+    const passwordHash = await bcrypt.hash(password, salt);
+
+    // Crear nuevo usuario con rol por defecto "user"
     const newUser = new User({
       username,
       email,
       password: passwordHash,
+      role: "user", // Asignar el rol por defecto de "user"
     });
 
+    // Guardar el nuevo usuario en la base de datos
     const userSaved = await newUser.save();
+
+    // Crear token de acceso para el nuevo usuario
     const token = await createAccessToken({ id: userSaved._id });
+
+    // Establecer el token en la cookie de respuesta
     res.cookie("token", token);
+
+    // Enviar respuesta con los detalles del usuario registrado
     res.status(201).json({
       id: userSaved._id,
       email: userSaved.email,
       username: userSaved.username,
+      role: userSaved.role, // Incluir el rol del usuario en la respuesta
       createdAt: userSaved.createdAt,
       updatedAt: userSaved.updatedAt,
     });
@@ -73,6 +107,7 @@ export const profile = async (req, res) => {
     id: userFoun._id,
     email: userFoun.email,
     username: userFoun.username,
+    role: userFoun.role,
     createdAt: userFoun.createdAt,
     updatedAt: userFoun.updatedAt,
   });
