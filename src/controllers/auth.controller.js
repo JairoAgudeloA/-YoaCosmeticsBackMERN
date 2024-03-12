@@ -16,7 +16,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "Las contraseñas no coinciden" });
     }
     if (
-      password.length < 8 ||
+      password.length < 6 ||
       !/\d/.test(password) || // Al menos un número
       !/[A-Z]/.test(password) || // Al menos una letra mayúscula
       !/[^a-zA-Z0-9]/.test(password) // Al menos un carácter especial
