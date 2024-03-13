@@ -23,11 +23,11 @@ const productSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    // category: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "Category",
-    //     required: true,
-    // },
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+      required: true,
+    },
     // createdBy: {
     //     type: mongoose.Schema.Types.ObjectId,
     //     ref: "User",
