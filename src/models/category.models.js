@@ -15,6 +15,10 @@ const categorySchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    image: {
+      url: String,
+      public_id: String,
+    },
     products: [
       {
         type: mongoose.Schema.Types.ObjectId,

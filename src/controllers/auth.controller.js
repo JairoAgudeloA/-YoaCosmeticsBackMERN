@@ -102,3 +102,56 @@ export const profile = async (req, res) => {
     updatedAt: userFoun.updatedAt,
   });
 };
+
+export const updateProfile = async (req, res) => {
+  const {
+    username,
+    biography,
+    phone,
+    birthdate,
+    confirmPassword,
+    newPassword,
+    confirmNewPassword,
+    photo,
+  } = req.body;
+
+  const profileFound = await User.findById(req.user.id);
+
+  if (!profileFound) {
+    return res.status(400).json({ message: "Usuario no encontrado" });
+  }
+
+  const isPasswordValid = await bcrypt.compare(
+    confirmPassword,
+    profileFound.password
+  );
+  if (!isPasswordValid) {
+    return res.status(400).json({ message: "Contraseña incorrecta" });
+  }
+  if (newPassword !== confirmNewPassword) {
+    return res.status(400).json({ message: "Las contraseñas no coinciden" });
+  }
+  const salt = await bcrypt.genSalt(10);
+  const passwordHash = await bcrypt.hash(newPassword, salt);
+
+  profileFound.username = username;
+  profileFound.biography = biography;
+  profileFound.phone = phone;
+  profileFound.birthdate = birthdate;
+  profileFound.password = passwordHash;
+  profileFound.photo = photo;
+
+  const profileSaved = await profileFound.save();
+  res.json({
+    id: profileSaved._id,
+    email: profileSaved.email,
+    username: profileSaved.username,
+    photo: profileSaved.photo,
+    biography: profileSaved.biography,
+    phone: profileSaved.phone,
+    birthdate: profileSaved.birthdate,
+    role: profileSaved.role,
+    createdAt: profileSaved.createdAt,
+    updatedAt: profileSaved.updatedAt,
+  });
+};

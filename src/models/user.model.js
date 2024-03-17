@@ -22,6 +22,19 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user", // Valor por defecto: "user"
     },
+    photo: {
+      url: String,
+      public_id: String,
+    },
+    biography: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    birthdate: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
