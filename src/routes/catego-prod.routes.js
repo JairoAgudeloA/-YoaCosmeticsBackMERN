@@ -21,7 +21,7 @@ const router = Router();
 //ruta de productos
 router.get("/product", authRequired, getProducts);
 router.get("/product/:id", authRequired, getProduct);
-router.post("/product", createProduct);
+router.post("/product",authRequired, createProduct);
 router.put("/product/:id", authRequired, updateProduct);
 router.delete("/product/:id", authRequired, deleteProduct);
 
