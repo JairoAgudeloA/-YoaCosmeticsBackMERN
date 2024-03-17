@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import { createAccessToken } from "../libs/jwt.js";
+// import { validatePassword } from "../schemas/auth.schema.js";
 
 export const register = async (req, res) => {
   const { email, password, username, confirmPassword } = req.body;
@@ -15,18 +16,7 @@ export const register = async (req, res) => {
     if (password !== confirmPassword) {
       return res.status(400).json({ message: "Las contraseñas no coinciden" });
     }
-    if (
-      password.length < 6 ||
-      !/\d/.test(password) || // Al menos un número
-      !/[A-Z]/.test(password) || // Al menos una letra mayúscula
-      !/[^a-zA-Z0-9]/.test(password) // Al menos un carácter especial
-    ) {
-      return res.status(400).json({
-        message:
-          "La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un caracter especial",
-      });
-    }
-
+    // validatePassword.parse({ password, confirmPassword });
     // Generar hash de la contraseña
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
