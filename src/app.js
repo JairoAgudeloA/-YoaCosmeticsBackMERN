@@ -3,6 +3,8 @@ import morgan from "morgan";
 import authRoutes from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
 import productRoutes from "./routes/catego-prod.routes.js";
+import usersRoutes from "./routes/users.routes.js";
+
 import cors from "cors";
 
 const app = express();
@@ -19,5 +21,6 @@ app.use(cookieParser());
 
 app.use("/api", authRoutes);
 app.use("/api", productRoutes);
+app.use("/api/admin", usersRoutes);
 
 export default app;

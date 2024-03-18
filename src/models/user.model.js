@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["user", "admin"],
+      trim: true,
       default: "user", // Valor por defecto: "user"
     },
     photo: {

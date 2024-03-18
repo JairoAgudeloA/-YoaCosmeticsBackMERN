@@ -18,12 +18,18 @@ import {
 } from "../controllers/category.controller.js";
 
 const router = Router();
-//ruta de productos
-router.get("/product", authRequired, getProducts);
-router.get("/product/:id", authRequired, getProduct);
-router.post("/product",authRequired, createProduct);
-router.put("/product/:id", authRequired, updateProduct);
-router.delete("/product/:id", authRequired, deleteProduct);
+// //ruta de productos
+// router.get("/products", authRequired, getProducts);
+// router.get("/product/:id", authRequired, getProduct);
+// router.post("/product", authRequired, createProduct);
+// router.put("/product/:id", authRequired, updateProduct);
+// router.delete("/product/:id", authRequired, deleteProduct);
+
+router.get("/products", getProducts);
+router.get("/product/:id", getProduct);
+router.post("/product", createProduct);
+router.put("/product/:id", updateProduct);
+router.delete("/product/:id", deleteProduct);
 
 //ruta de categorías
 router.get("/categories", getCategories);

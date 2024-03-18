@@ -33,7 +33,10 @@ export const register = async (req, res) => {
     const userSaved = await newUser.save();
 
     // Crear token de acceso para el nuevo usuario
-    const token = await createAccessToken({ id: userSaved._id });
+    const token = await createAccessToken({
+      id: userSaved._id,
+      role: userSaved.role,
+    });
 
     // Establecer el token en la cookie de respuesta
     res.cookie("token", token);
@@ -65,7 +68,10 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Contraseña incorrecta" });
     }
 
-    const token = await createAccessToken({ id: userFound._id });
+    const token = await createAccessToken({
+      id: userFound._id,
+      role: userFound.role,
+    });
 
     res.cookie("token", token);
     res.json({

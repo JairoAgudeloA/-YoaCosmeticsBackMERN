@@ -1,9 +1,11 @@
-import {Router} from 'express';
+import { Router } from "express";
 
 const router = Router();
 
-router.get('/contacts');
-router.get('/contacts/:id');
-router.post('/contacts');
-router.put('/contacts/:id');
-router.delete('/contacts/:id');
+router.get("/contacts");
+router.get("/contacts/:id");
+router.post("/contacts");
+router.put("/contacts/:id");
+router.delete("/contacts/:id");
+
+export default router;
