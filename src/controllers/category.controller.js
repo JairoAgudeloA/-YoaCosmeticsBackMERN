@@ -29,6 +29,8 @@ export const createCategory = async (req, res) => {
     const { name, description, date } = req.body;
     let image = null;
 
+    console.log(req.files);
+
     if (req.files.image) {
       const result = await uploadImage(req.files.image.tempFilePath);
       await fs.remove(req.files.image.tempFilePath);

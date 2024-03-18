@@ -14,10 +14,10 @@ export const getProduct = async (req, res) => {
   res.json(product);
 };
 export const createProduct = async (req, res) => {
-  const { name, price, description, image, date, category } = req.body;
   try {
+    const { name, price, description, date, category } = req.body;
     let image = null;
-
+    console.log(req.files);
     if (req.files.image) {
       const result = await uploadImage(req.files.image.tempFilePath);
       await fs.remove(req.files.image.tempFilePath);
@@ -49,6 +49,12 @@ export const getProductsByCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
   try {
     const products = await Product.find({ category: categoryId });
+
+    if (!products)
+      return res
+        .status(404)
+        .json({ message: "No se encontraron productos para esta categoría" });
+
     res.json(products);
   } catch (error) {
     res
