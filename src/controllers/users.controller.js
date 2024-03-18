@@ -6,14 +6,12 @@ export const getUsers = async (req, res) => {
   try {
     const users = await User.find();
     if (!users) {
-      return res.status(404).json({ message: "No hay usuarios" });
+      return res.status(404).json(["No hay usuarios"]);
     }
 
     res.json(users);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: error.message || "Error al obtener usuarios" });
+    res.status(500).json(["Error al obtener usuarios"]);
   }
 };
 
@@ -21,13 +19,11 @@ export const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json(["Usuario no encontrado"]);
     }
     res.json(user);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: error.message || "Error al obtener usuario" });
+    res.status(500).json([error.message]);
   }
 };
 
@@ -36,9 +32,7 @@ export const createUser = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "El correo electrónico ya está registrado" });
+      return res.status(400).json(["El correo electrónico ya está registrado"]);
     }
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
@@ -52,7 +46,7 @@ export const createUser = async (req, res) => {
     const userSaved = await newUser.save();
     res.json(userSaved);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json([error.message]);
   }
 };
 
@@ -63,7 +57,7 @@ export const updateUser = async (req, res) => {
     // if (existingUser) {
     //   return res
     //     .status(400)
-    //     .json({ message: "El correo electrónico ya está registrado" });
+    //     .json([ "El correo electrónico ya está registrado" });
     // }
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
@@ -72,7 +66,7 @@ export const updateUser = async (req, res) => {
       new: true,
     });
     if (!user) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json(["Usuario no encontrado"]);
     }
     user.username = username;
     // user.email = email;
@@ -82,7 +76,7 @@ export const updateUser = async (req, res) => {
     await user.save();
     res.json(user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json([error.message]);
   }
 };
 
@@ -90,10 +84,10 @@ export const deleteUser = async (req, res) => {
   try {
     const userDelete = await User.findByIdAndDelete(req.params.id);
     if (!userDelete) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json(["Usuario no encontrado"]);
     }
-    res.json({ message: "Usuario eliminado" });
+    res.json(["Usuario eliminado"]);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json([error.message]);
   }
 };

@@ -9,8 +9,7 @@ export const getProducts = async (req, res) => {
 
 export const getProduct = async (req, res) => {
   const product = await Product.findById(req.params.id);
-  if (!product)
-    return res.status(404).json({ message: "Producto no encontrado" });
+  if (!product) return res.status(404).json(["Producto no encontrado"]);
   res.json(product);
 };
 export const createProduct = async (req, res) => {
@@ -39,9 +38,7 @@ export const createProduct = async (req, res) => {
     const savedProduct = await newProduct.save();
     res.json(savedProduct);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: error.message || "Error al crear el producto" });
+    res.status(500).json([error.message]);
   }
 };
 
@@ -53,13 +50,11 @@ export const getProductsByCategory = async (req, res) => {
     if (!products)
       return res
         .status(404)
-        .json({ message: "No se encontraron productos para esta categoría" });
+        .json(["No se encontraron productos para esta categoría"]);
 
     res.json(products);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: error.message || "Error al obtener los productos" });
+    res.status(500).json([error.message]);
   }
 };
 
@@ -67,15 +62,13 @@ export const updateProduct = async (req, res) => {
   const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
   });
-  if (!product)
-    return res.status(404).json({ message: "Producto no encontrado" });
+  if (!product) return res.status(404).json(["Producto no encontrado"]);
   res.json(product);
 };
 
 export const deleteProduct = async (req, res) => {
   const removeProduct = await Product.findByIdAndDelete(req.params.id);
-  if (!removeProduct)
-    return res.status(404).json({ message: "Producto no encontrado" });
+  if (!removeProduct) return res.status(404).json(["Producto no encontrado"]);
   if (removeProduct.image.public_id) {
     await deleteImage(removeProduct.image.public_id);
   }

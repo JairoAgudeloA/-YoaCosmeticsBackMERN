@@ -9,12 +9,10 @@ export const register = async (req, res) => {
     // Verificar si el usuario ya existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "El correo electrónico ya está registrado" });
+      return res.status(400).json(["El correo electrónico ya está registrado"]);
     }
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: "Las contraseñas no coinciden" });
+      return res.status(400).json(["Las contraseñas no coinciden"]);
     }
     // validatePassword.parse({ password, confirmPassword });
     // Generar hash de la contraseña
@@ -51,7 +49,7 @@ export const register = async (req, res) => {
       updatedAt: userSaved.updatedAt,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json([error.message]);
   }
 };
 
@@ -60,12 +58,12 @@ export const login = async (req, res) => {
   try {
     const userFound = await User.findOne({ email });
     if (!userFound) {
-      return res.status(400).json({ message: "Usuario no encontrado" });
+      return res.status(400).json(["Usuario no encontrado"]);
     }
 
     const isMatch = await bcrypt.compare(password, userFound.password);
     if (!isMatch) {
-      return res.status(400).json({ message: "Contraseña incorrecta" });
+      return res.status(400).json(["Contraseña incorrecta"]);
     }
 
     const token = await createAccessToken({
@@ -82,7 +80,7 @@ export const login = async (req, res) => {
       updatedAt: userFound.updatedAt,
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json([error.message]);
   }
 };
 
@@ -96,8 +94,7 @@ export const logout = (req, res) => {
 export const profile = async (req, res) => {
   const userFoun = await User.findById(req.user.id);
 
-  if (!userFoun)
-    return res.status(400).json({ message: "Usuario no encontrado" });
+  if (!userFoun) return res.status(400).json(["Usuario no encontrado"]);
 
   return res.json({
     id: userFoun._id,
@@ -124,7 +121,7 @@ export const updateProfile = async (req, res) => {
   const profileFound = await User.findById(req.user.id);
 
   if (!profileFound) {
-    return res.status(400).json({ message: "Usuario no encontrado" });
+    return res.status(400).json(["Usuario no encontrado"]);
   }
 
   const isPasswordValid = await bcrypt.compare(
@@ -132,10 +129,10 @@ export const updateProfile = async (req, res) => {
     profileFound.password
   );
   if (!isPasswordValid) {
-    return res.status(400).json({ message: "Contraseña incorrecta" });
+    return res.status(400).json(["Contraseña incorrecta"]);
   }
   if (newPassword !== confirmNewPassword) {
-    return res.status(400).json({ message: "Las contraseñas no coinciden" });
+    return res.status(400).json(["Las contraseñas no coinciden"]);
   }
   const salt = await bcrypt.genSalt(10);
   const passwordHash = await bcrypt.hash(newPassword, salt);

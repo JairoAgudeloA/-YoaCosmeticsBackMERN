@@ -7,7 +7,7 @@ export const getCategories = async (req, res) => {
     const categories = await Category.find();
     res.json(categories);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener las categorías" });
+    res.status(500).json(["Error al obtener las categorías"]);
   }
 };
 
@@ -16,11 +16,11 @@ export const getCategory = async (req, res) => {
   try {
     const category = await Category.findById(categoryId).populate("products");
     if (!category) {
-      return res.status(404).json({ message: "Categoría no encontrada" });
+      return res.status(404).json(["Categoría no encontrada"]);
     }
     res.json(category);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener la categoría" });
+    res.status(500).json(["Error al obtener la categoría"]);
   }
 };
 
@@ -51,7 +51,7 @@ export const createCategory = async (req, res) => {
 
     res.json(savedCategory);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json([error.message]);
   }
 };
 
@@ -61,11 +61,11 @@ export const updateCategory = async (req, res) => {
       new: true,
     });
     if (!category) {
-      return res.status(404).json({ message: "Categoría no encontrada" });
+      return res.status(404).json(["Categoría no encontrada"]);
     }
     res.json(category);
   } catch (error) {
-    res.status(500).json({ message: "Error al actualizar la categoría" });
+    res.status(500).json(["Error al actualizar la categoría"]);
   }
 };
 
@@ -73,15 +73,13 @@ export const deleteCategory = async (req, res) => {
   try {
     const remoteCategory = await Category.findByIdAndDelete(req.params.id);
     if (!remoteCategory) {
-      return res.status(404).json({ message: "Categoría no encontrada" });
+      return res.status(404).json(["Categoría no encontrada"]);
     }
     if (remoteCategory.image.public_id) {
       await deleteImage(remoteCategory.image.public_id);
     }
     return res.sendStatus(204);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: error.message && "Error al eliminar la categoría" });
+    res.status(500).json([error.message]);
   }
 };
