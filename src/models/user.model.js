@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
       trim: true,
       default: "user", // Valor por defecto: "user"
     },
-    photo: {
+    image: {
       url: String,
       public_id: String,
     },

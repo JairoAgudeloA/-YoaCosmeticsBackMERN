@@ -5,6 +5,10 @@ import bcrypt from "bcryptjs";
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find();
+    if (!users) {
+      return res.status(404).json({ message: "No hay usuarios" });
+    }
+
     res.json(users);
   } catch (error) {
     res
@@ -16,6 +20,9 @@ export const getUsers = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
     res.json(user);
   } catch (error) {
     res
@@ -61,7 +68,12 @@ export const updateUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    const user = await User.findById(req.params.id);
+    const user = await User.findByIdAndUpdate(req.params.id, res.body, {
+      new: true,
+    });
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
     user.username = username;
     // user.email = email;
     user.password = password;
@@ -76,7 +88,10 @@ export const updateUser = async (req, res) => {
 
 export const deleteUser = async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
+    const userDelete = await User.findByIdAndDelete(req.params.id);
+    if (!userDelete) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
     res.json({ message: "Usuario eliminado" });
   } catch (error) {
     res.status(500).json({ message: error.message });

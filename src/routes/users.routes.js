@@ -14,7 +14,7 @@ import {
 
 const router = Router();
 
-//rutas protegidas
+//rutas protegidas  con el middleware authAdmin
 // router.get("/users", authAdmin, getUsers);
 // router.get("/user/:id", authAdmin, getUser);
 // router.post("/user", authAdmin, createUser);

@@ -1,4 +1,6 @@
 import Product from "../models/product.model.js";
+import { uploadImage, deleteImage } from "../libs/cloudinary.js";
+import fs from "fs-extra";
 
 export const getProducts = async (req, res) => {
   const products = await Product.find();
@@ -12,13 +14,24 @@ export const getProduct = async (req, res) => {
   res.json(product);
 };
 export const createProduct = async (req, res) => {
-  const { name, price, description, productImage, date, category } = req.body;
+  const { name, price, description, image, date, category } = req.body;
   try {
+    let image = null;
+
+    if (req.files.image) {
+      const result = await uploadImage(req.files.image.tempFilePath);
+      await fs.remove(req.files.image.tempFilePath);
+      image = {
+        url: result.secure_url,
+        public_id: result.public_id,
+      };
+    }
+
     const newProduct = new Product({
       name,
       price,
       description,
-      productImage,
+      image,
       date,
       category: category,
     });
@@ -54,8 +67,11 @@ export const updateProduct = async (req, res) => {
 };
 
 export const deleteProduct = async (req, res) => {
-  const product = await Product.findByIdAndDelete(req.params.id);
-  if (!product)
+  const removeProduct = await Product.findByIdAndDelete(req.params.id);
+  if (!removeProduct)
     return res.status(404).json({ message: "Producto no encontrado" });
+  if (removeProduct.image.public_id) {
+    await deleteImage(removeProduct.image.public_id);
+  }
   return res.sendStatus(204);
 };

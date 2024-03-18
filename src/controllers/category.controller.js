@@ -1,8 +1,14 @@
 import Category from "../models/category.models.js";
+import { uploadImage, deleteImage } from "../libs/cloudinary.js";
+import fs from "fs-extra";
 
 export const getCategories = async (req, res) => {
-  const categories = await Category.find();
-  res.json(categories);
+  try {
+    const categories = await Category.find();
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener las categorías" });
+  }
 };
 
 export const getCategory = async (req, res) => {
@@ -19,11 +25,23 @@ export const getCategory = async (req, res) => {
 };
 
 export const createCategory = async (req, res) => {
-  const { name, description, date } = req.body;
   try {
+    const { name, description, date } = req.body;
+    let image = null;
+
+    if (req.files.image) {
+      const result = await uploadImage(req.files.image.tempFilePath);
+      await fs.remove(req.files.image.tempFilePath);
+      image = {
+        url: result.secure_url,
+        public_id: result.public_id,
+      };
+    }
+
     const newCategory = new Category({
       name,
       description,
+      image,
       date,
     });
 
@@ -36,19 +54,32 @@ export const createCategory = async (req, res) => {
 };
 
 export const updateCategory = async (req, res) => {
-  const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  if (!category) {
-    return res.status(404).json({ message: "Categoría no encontrada" });
+  try {
+    const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    if (!category) {
+      return res.status(404).json({ message: "Categoría no encontrada" });
+    }
+    res.json(category);
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar la categoría" });
   }
-  res.json(category);
 };
 
 export const deleteCategory = async (req, res) => {
-  const category = await Category.findByIdAndDelete(req.params.id);
-  if (!category) {
-    return res.status(404).json({ message: "Categoría no encontrada" });
+  try {
+    const remoteCategory = await Category.findByIdAndDelete(req.params.id);
+    if (!remoteCategory) {
+      return res.status(404).json({ message: "Categoría no encontrada" });
+    }
+    if (remoteCategory.image.public_id) {
+      await deleteImage(remoteCategory.image.public_id);
+    }
+    return res.sendStatus(204);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: error.message && "Error al eliminar la categoría" });
   }
-  return res.sendStatus(204);
 };
