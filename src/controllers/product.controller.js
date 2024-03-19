@@ -1,20 +1,34 @@
 import Product from "../models/product.model.js";
+import Category from "../models/category.models.js";
 import { uploadImage, deleteImage } from "../libs/cloudinary.js";
 import fs from "fs-extra";
 
 export const getProducts = async (req, res) => {
-  const products = await Product.find();
-  res.json(products);
+  try {
+    const products = await Product.find().populate("category", "name"); // Modifica aquí para poblar el campo de 'category' con solo el nombre
+    res.json(products);
+  } catch (error) {
+    res.status(500).json([error.message]);
+  }
+};
+export const getProduct = async (req, res) => {
+  const productId = req.params.id;
+  try {
+    const product = await Product.findById(productId).populate(
+      "category",
+      "name"
+    );
+    if (!product) return res.status(404).json(["Producto no encontrado"]);
+    res.json(product);
+  } catch (error) {
+    res.status(500).json([error.message]);
+  }
 };
 
-export const getProduct = async (req, res) => {
-  const product = await Product.findById(req.params.id);
-  if (!product) return res.status(404).json(["Producto no encontrado"]);
-  res.json(product);
-};
 export const createProduct = async (req, res) => {
   try {
     const { name, price, description, date, category } = req.body;
+
     let image = null;
     console.log(req.files);
     if (req.files.image) {
@@ -46,6 +60,7 @@ export const getProductsByCategory = async (req, res) => {
   const categoryId = req.params.categoryId;
   try {
     const products = await Product.find({ category: categoryId });
+    // const categoryName = await Category.findOne({ name });
 
     if (!products)
       return res

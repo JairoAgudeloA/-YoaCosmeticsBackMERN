@@ -28,6 +28,7 @@ app.use(
 
 app.use("/api", authRoutes);
 app.use("/api", productRoutes);
-app.use("/api/admin", usersRoutes);
+// app.use("/api/admin", usersRoutes); //cuando se necesite proteger rutas
+app.use("/api", usersRoutes);
 
 export default app;
