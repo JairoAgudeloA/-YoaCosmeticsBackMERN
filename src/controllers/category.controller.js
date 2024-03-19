@@ -27,23 +27,23 @@ export const getCategory = async (req, res) => {
 export const createCategory = async (req, res) => {
   try {
     const { name, description, date } = req.body;
-    let image = null;
+    // let image = null;
 
-    console.log(req.files);
+    // console.log(req.files);
 
-    if (req.files.image) {
-      const result = await uploadImage(req.files.image.tempFilePath);
-      await fs.remove(req.files.image.tempFilePath);
-      image = {
-        url: result.secure_url,
-        public_id: result.public_id,
-      };
-    }
+    // if (req.files.image) {
+    //   const result = await uploadImage(req.files.image.tempFilePath);
+    //   await fs.remove(req.files.image.tempFilePath);
+    //   image = {
+    //     url: result.secure_url,
+    //     public_id: result.public_id,
+    //   };
+    // }
 
     const newCategory = new Category({
       name,
       description,
-      image,
+      // image,
       date,
     });
 
@@ -75,9 +75,9 @@ export const deleteCategory = async (req, res) => {
     if (!remoteCategory) {
       return res.status(404).json(["Categoría no encontrada"]);
     }
-    if (remoteCategory.image.public_id) {
-      await deleteImage(remoteCategory.image.public_id);
-    }
+    // if (remoteCategory.image.public_id) {
+    // await deleteImage(remoteCategory.image.public_id);
+    // }
     return res.sendStatus(204);
   } catch (error) {
     res.status(500).json([error.message]);
