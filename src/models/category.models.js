@@ -16,8 +16,7 @@ const categorySchema = new mongoose.Schema(
       default: Date.now,
     },
     image: {
-      url: String,
-      public_id: String,
+      type: String,
     },
     products: [
       {

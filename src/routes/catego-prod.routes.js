@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
+import { upload } from "../util/uploadConfig.js";
 import {
   createProduct,
   updateProduct,
@@ -27,8 +28,8 @@ const router = Router();
 
 router.get("/products", getProducts);
 router.get("/product/:id", getProduct);
-router.post("/product", createProduct);
-router.put("/product/:id", updateProduct);
+router.post("/product", upload.single("productImage"), createProduct);
+router.put("/product/:id", upload.single("productImage"), updateProduct);
 router.delete("/product/:id", deleteProduct);
 
 //ruta de categorías

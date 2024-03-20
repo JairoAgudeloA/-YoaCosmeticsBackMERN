@@ -1,6 +1,6 @@
 import Category from "../models/category.models.js";
-import { uploadImage, deleteImage } from "../libs/cloudinary.js";
-import fs from "fs-extra";
+// import { uploadImage, deleteImage } from "../libs/cloudinary.js";
+// import fs from "fs-extra";
 
 export const getCategories = async (req, res) => {
   try {
@@ -43,7 +43,7 @@ export const createCategory = async (req, res) => {
     const newCategory = new Category({
       name,
       description,
-      // image,
+      image,
       date,
     });
 

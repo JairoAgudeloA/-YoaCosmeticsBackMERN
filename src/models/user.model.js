@@ -24,8 +24,7 @@ const userSchema = new mongoose.Schema(
       default: "user", // Valor por defecto: "user"
     },
     image: {
-      url: String,
-      public_id: String,
+      type: String,
     },
     biography: {
       type: String,
