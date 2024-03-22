@@ -42,6 +42,8 @@ const fileFilter = function (req, file, cb) {
   }
 };
 
+// export const ipFileServer = "http://localhost:5000/api/";
+
 // Configurar Multer con el almacenamiento y el filtro de archivos
 export const upload = multer({
   storage: storage,

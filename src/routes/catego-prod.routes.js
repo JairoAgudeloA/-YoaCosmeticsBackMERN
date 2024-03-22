@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { authRequired } from "../middlewares/validateToken.js";
-import { upload } from "../util/uploadConfig.js";
+import { upload } from "../middlewares/multer.js";
 import {
   createProduct,
   updateProduct,
