@@ -32,5 +32,5 @@ app.use("/api", authRoutes);
 app.use("/api", productRoutes);
 // app.use("/api/admin", usersRoutes); //cuando se necesite proteger rutas
 app.use("/api", usersRoutes);
-
+app.use("/api/uploads", express.static("uploads"));
 export default app;
