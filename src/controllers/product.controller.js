@@ -1,6 +1,4 @@
 import Product from "../models/product.model.js";
-// import Category from "../models/category.models.js";
-// import { uploadImage, deleteImage } from "../libs/cloudinary.js";
 import fs from "fs-extra";
 
 export const getProducts = async (req, res) => {
@@ -80,7 +78,7 @@ export const updateProduct = async (req, res) => {
     const productId = req.params.id;
 
     // Verificar si el ID del producto es válido
-    if (!productId) return res.status(404).json(["Producto no encontrado"]);
+    // if (!productId) return res.status(404).json(["Producto no encontrado"]);
 
     // Obtener el producto de la base de datos
     const product = await Product.findById(productId);
@@ -139,7 +137,6 @@ export const deleteProduct = async (req, res) => {
     if (!product) return res.status(404).json(["Producto no encontrado"]);
 
     // Verificar si existe una imagen asociada al producto y eliminarla
-    console.log(product.productImage);
     if (product.productImage) {
       await fs.unlink(product.productImage); // Intentar eliminar la imagen
     }
@@ -149,7 +146,7 @@ export const deleteProduct = async (req, res) => {
 
     res.sendStatus(204); // Producto eliminado con éxito
   } catch (error) {
-    console.error("Error al eliminar el producto:", error);
+    console.error("Error al eliminar el producto:", error.message);
     res.status(500).json(["Error al eliminar el producto"]);
   }
 };

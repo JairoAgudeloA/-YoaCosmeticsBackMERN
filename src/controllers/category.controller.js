@@ -1,6 +1,6 @@
 import Category from "../models/category.models.js";
-// import { uploadImage, deleteImage } from "../libs/cloudinary.js";
-// import fs from "fs-extra";
+import Product from "../models/product.model.js";
+import fs from "fs-extra";
 
 export const getCategories = async (req, res) => {
   try {
@@ -14,7 +14,7 @@ export const getCategories = async (req, res) => {
 export const getCategory = async (req, res) => {
   const categoryId = req.params.id;
   try {
-    const category = await Category.findById(categoryId).populate("products");
+    const category = await Category.findById(categoryId);
     if (!category) {
       return res.status(404).json(["Categoría no encontrada"]);
     }
@@ -27,23 +27,14 @@ export const getCategory = async (req, res) => {
 export const createCategory = async (req, res) => {
   try {
     const { name, description, date } = req.body;
-    // let image = null;
 
-    // console.log(req.files);
-
-    // if (req.files.image) {
-    //   const result = await uploadImage(req.files.image.tempFilePath);
-    //   await fs.remove(req.files.image.tempFilePath);
-    //   image = {
-    //     url: result.secure_url,
-    //     public_id: result.public_id,
-    //   };
-    // }
+    const imagePath = req.file.path;
+    console.log(imagePath);
 
     const newCategory = new Category({
       name,
       description,
-      image,
+      categoryImage: imagePath,
       date,
     });
 
@@ -57,29 +48,63 @@ export const createCategory = async (req, res) => {
 
 export const updateCategory = async (req, res) => {
   try {
-    const category = await Category.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    if (!category) {
-      return res.status(404).json(["Categoría no encontrada"]);
+    const categoryId = req.params.id;
+
+    const category = await Category.findById(categoryId);
+
+    if (!category) return res.status(404).json(["Categoría no encontrada"]);
+
+    if (category.categoryImage) {
+      await fs.unlink(category.categoryImage);
     }
-    res.json(category);
+
+    const { name, description, date } = req.body;
+    let categoryImage = "";
+
+    if (req.file !== undefined) {
+      categoryImage = req.file.path;
+    }
+    const updatedValues = {
+      name: name,
+      description: description,
+      date: date,
+    };
+
+    if (categoryImage !== "") {
+      updatedValues.categoryImage = categoryImage;
+    }
+
+    const updateCategory = await Category.findByIdAndUpdate(
+      categoryId,
+      updatedValues,
+      { new: true }
+    );
+
+    res.status(200).json(updateCategory);
   } catch (error) {
-    res.status(500).json(["Error al actualizar la categoría"]);
+    res.status(500).json([error.message]);
   }
 };
-
 export const deleteCategory = async (req, res) => {
   try {
-    const remoteCategory = await Category.findByIdAndDelete(req.params.id);
-    if (!remoteCategory) {
-      return res.status(404).json(["Categoría no encontrada"]);
+    const categoryId = req.params.id;
+    const category = await Category.findById(categoryId);
+
+    if (!category) return res.status(404).json(["Categoría no encontrada"]);
+
+    await Product.updateMany(
+      { category: categoryId },
+      { $unset: { category: "" } }
+    );
+
+    if (category.categoryImage) {
+      await fs.unlink(category.categoryImage);
     }
-    // if (remoteCategory.image.public_id) {
-    // await deleteImage(remoteCategory.image.public_id);
-    // }
-    return res.sendStatus(204);
+
+    await Category.findByIdAndDelete(categoryId);
+    res.json({ message: "Categoría eliminada" });
   } catch (error) {
+    console.error("Error al eliminar la categoría:", error.message);
     res.status(500).json([error.message]);
   }
 };

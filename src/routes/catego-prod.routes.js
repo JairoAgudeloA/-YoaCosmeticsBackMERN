@@ -35,8 +35,8 @@ router.delete("/product/:id", deleteProduct);
 //ruta de categorías
 router.get("/categories", getCategories);
 router.get("/category/:id", getCategory);
-router.post("/category", createCategory);
-router.put("/category/:id", updateCategory);
+router.post("/category", upload.single("categoryImage"), createCategory);
+router.put("/category/:id", upload.single("categoryImage"), updateCategory);
 router.delete("/category/:id", deleteCategory);
 router.get("/category/products/:categoryId", getProductsByCategory);
 

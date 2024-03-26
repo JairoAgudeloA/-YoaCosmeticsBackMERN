@@ -5,6 +5,7 @@ const categorySchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
+      unique: true,
       trim: true,
     },
     description: {
@@ -15,15 +16,15 @@ const categorySchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    image: {
+    categoryImage: {
       type: String,
     },
-    products: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
-      },
-    ],
+    // products: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Product",
+    //   },
+    // ],
   },
   {
     timestamps: true,
